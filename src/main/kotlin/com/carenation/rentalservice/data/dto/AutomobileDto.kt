@@ -5,5 +5,6 @@ data class AutomobileDto(
         val category: String?,
         val manufacturer: String?,
         val model: String?,
-        val creationDate: String?
+        val year: String?,
+        val status: String?
 )

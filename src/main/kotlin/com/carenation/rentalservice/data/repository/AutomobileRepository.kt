@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface AutomobileRepository : JpaRepository<Automobile, Long> {
     fun findByCategory(category: String): List<Automobile>
-    fun findByCreationDate(date: String): List<Automobile>
+    fun findByYear(date: String): List<Automobile>
 }
