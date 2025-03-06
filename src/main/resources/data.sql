@@ -1,4 +1,4 @@
-INSERT INTO automobile (`category`, `manufacturer`, `model`, `year`, `status`) VALUES
+INSERT INTO automobile (`category`, `manufacturer`, `model`, `year`, `status` ) VALUES
 ('미니SUV', '현대', '코나', '2024', 'available'),
 ('준중형SUV', '현대', '아이오닉', '2024', 'available'),
 ('대형RV', '현대', '스타리아', '2022', 'lost'),
