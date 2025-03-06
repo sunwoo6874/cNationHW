@@ -5,6 +5,7 @@ import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/rental/api")
 class AutomobileController(private val automobileService: AutomobileService) {
 
     @PostMapping("/register")

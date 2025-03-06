@@ -3,9 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>홈 페이지</title>
+    <title>자동차 렌탈 서비스</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #444;
+        }
+        .endpoint {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .endpoint h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .curl-example {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
-    <p>자동차 렌탈 서비스 어플리케이션</p>
+    <div class="container">
+        <h1>자동차 렌탈 서비스 어플리케이션</h1>
+        
+        <div class="endpoint">
+            <h3>차량 정보 등록</h3>
+            <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/register</code></p>
+            <h4>요청 예제:</h4>
+            <pre class="curl-example">
+curl -X POST -H "Content-Type: application/json" \
+-d '{"category":"현대","manufacturer":"Toyota","model":"RAV4","year":"2025","status":"NEW"}' \
+http://localhost:8080/rental/api/register
+            </pre>
+        </div>
+
+        <div class="endpoint">
+            <h3>차량 정보 조회</h3>
+            <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/lookup</code></p>
+        </div>
+
+        <div class="endpoint">
+            <h3>차량 정보 수정</h3>
+            <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/update</code></p>
+        </div>
+    </div>
 </body>
 </html>
