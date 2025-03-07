@@ -15,7 +15,7 @@ class AutomobileDaoImpl : AutomobileDao {
         val query =
                 entityManager
                         .createQuery(
-                                "SELECT * FROM automobile WHERE status = :status",
+                                "SELECT a FROM Automobile a WHERE a.status = :status",
                                 Automobile::class.java
                         )
                         .setParameter("status", status)
@@ -26,7 +26,7 @@ class AutomobileDaoImpl : AutomobileDao {
         val query =
                 entityManager
                         .createQuery(
-                                "SELECT * FROM automobile WHERE category = :category",
+                                "SELECT a FROM Automobile a JOIN a.categories c WHERE c.bodyType = :category",
                                 Automobile::class.java
                         )
                         .setParameter("category", category)

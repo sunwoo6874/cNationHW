@@ -2,77 +2,91 @@ package com.carenation.rentalservice.service.impl
 
 import com.carenation.rentalservice.data.dao.AutomobileDao
 import com.carenation.rentalservice.data.dto.AutomobileDto
+import com.carenation.rentalservice.data.entity.Automobile
+import com.carenation.rentalservice.data.entity.Category
+import com.carenation.rentalservice.repository.CategoryRepository
 import com.carenation.rentalservice.service.AutomobileService
 import java.time.LocalDateTime
-import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.*
+import org.springframework.transaction.annotation.Transactional
 
-@Slf4j
 @Service
-class AutomobileServiceImpl(private val automobileDao: AutomobileDao) : AutomobileService {
+class AutomobileServiceImpl(
+        private val automobileDao: AutomobileDao,
+        private val categoryRepository: CategoryRepository,
+        private var automobiles: List<Automobile>
+) : AutomobileService {
         private val log = LoggerFactory.getLogger(this::class.java)
+        private val STATUS = listOf("available", "lost", "rented", "repairing")
+        private val BODY_TYPE = listOf("미니SUV", "준중형SUV", "중형SUV", "경형RV", "대형RV", "중형트럭")
 
         @Transactional
         override fun setCar(
-                category: String?,
-                manufacturer: String?,
-                model: String?,
-                year: String?,
-                status: String?,
+                category: String,
+                manufacturer: String,
+                model: String,
+                year: String,
+                status: String,
                 rentTime: LocalDateTime
         ): AutomobileDto {
-                if (category.isNullOrEmpty() || category.isNullOrBlank()) {
-                        throw IllegalArgumentException("Category is required fields.")
-                }
 
                 val newCarDto =
                         AutomobileDto(
-                                id = null, // 새로운 차량이므로 id는 null
-                                category = category,
+                                id = null,
                                 manufacturer = manufacturer,
                                 model = model,
                                 year = year,
                                 status = status,
-                                rentTime = rentTime
+                                rentTime = rentTime,
+                                categories = setOf(category)
                         )
 
                 log.info("New car created (before saving to DB): {}", newCarDto)
 
-                val savedCarDto = automobileDao.save(newCarDto.toEntity()).toDto()
+                val savedCarDto = automobileDao.save(newCarDto.toEntity(categoryRepository)).toDto()
 
                 log.info("New car saved: {}", savedCarDto)
                 return savedCarDto
         }
 
-        // TODO: 실제로는 DB에서 데이터를 가져오는 로직 필요
-        override fun getCar(): AutomobileDto {
-                val carDto =
-                        AutomobileDto(
-                                id = 1L, // 예시로 하드코딩
-                                category = "Sedan",
-                                manufacturer = "Honda",
-                                model = "Civic",
-                                year = "2022",
-                                status = "RENTED",
-                                rentTime = LocalDateTime.now()
-                        )
-                log.info("Retrieved car: {}", carDto)
-                return carDto
+        override fun getCar(searchType: String): List<AutomobileDto> {
+                if (searchType.isNullOrEmpty() || searchType.isNullOrBlank()) {
+                        throw IllegalArgumentException("searchType is required.")
+                }
+
+                if (STATUS.contains(searchType)) {
+                        automobiles = automobileDao.findByStatus(searchType)
+                } else if (BODY_TYPE.contains(searchType)) {
+                        val category: Category? = categoryRepository.findByBodyType(searchType)
+
+                        val bodyType =
+                                category?.bodyType
+                                        ?: run {
+                                                val errorMessage = "bodyType not found"
+                                                throw IllegalArgumentException(errorMessage)
+                                        }
+                        automobiles = automobileDao.findByCategory(bodyType)
+                } else {
+                        throw IllegalStateException("unknown category requested..")
+                }
+
+                val amDtoList = automobiles.map { it.toDto() }
+
+                log.info("Retrieved car: {}", amDtoList)
+                return amDtoList
         }
 
-        // TODO: 실제로는 기존 데이터를 업데이트하는 로직 필요
         override fun updateCar(): AutomobileDto {
                 val updatedCarDto =
                         AutomobileDto(
                                 id = 1L,
-                                category = "Sedan",
                                 manufacturer = "Honda",
                                 model = "Civic",
-                                year = "2023", // 업데이트된 연식 예시
+                                year = "2023",
                                 status = "AVAILABLE",
-                                rentTime = LocalDateTime.now()
+                                rentTime = LocalDateTime.now(),
+                                categories = setOf("Sedan") // 하드코딩 예시
                         )
                 log.info("Updated car: {}", updatedCarDto)
                 return updatedCarDto

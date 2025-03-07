@@ -1,26 +1,34 @@
 package com.carenation.rentalservice.data.dto
 
-import com.carenation.rentalservice.data.entity.Automobile
-import com.fasterxml.jackson.annotation.JsonFormat
+import com.carenation.rentalservice.data.entity.*
+import com.carenation.rentalservice.repository.CategoryRepository
 import java.time.LocalDateTime
 
 data class AutomobileDto(
         val id: Long? = null,
-        val category: String? = null,
-        val manufacturer: String? = null,
-        val model: String? = null,
-        val year: String? = null,
-        val status: String? = null,
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") val rentTime: LocalDateTime? = null
+        val manufacturer: String,
+        val model: String,
+        val year: String,
+        val status: String,
+        val rentTime: LocalDateTime,
+        val categories: Set<String> = emptySet()
 ) {
-        fun toEntity(): Automobile =
+        fun toEntity(categoryRepository: CategoryRepository): Automobile =
                 Automobile(
                         id = this.id,
-                        category = this.category,
                         manufacturer = this.manufacturer,
                         model = this.model,
                         year = this.year,
                         status = this.status,
-                        rentTime = this.rentTime
+                        rentTime = this.rentTime,
+                        categories =
+                                this.categories
+                                        .mapNotNull { categoryName ->
+                                                categoryRepository.findByBodyType(categoryName)
+                                                        ?: categoryRepository.save(
+                                                                Category(bodyType = categoryName)
+                                                        )
+                                        }
+                                        .toSet()
                 )
 }

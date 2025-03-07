@@ -6,16 +6,16 @@ import java.time.temporal.ChronoUnit
 
 interface AutomobileService {
     fun setCar(
-            category: String?,
-            manufacturer: String?,
-            model: String?,
-            year: String?,
-            status: String?,
+            category: String,
+            manufacturer: String,
+            model: String,
+            year: String,
+            status: String,
             rentTime: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
     ): AutomobileDto
 
     // category 및 status로 고를 수 있어야 한다.
-    fun getCar(): AutomobileDto
+    fun getCar(searchType: String): List<AutomobileDto>
 
     fun updateCar(): AutomobileDto
 }
