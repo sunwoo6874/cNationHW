@@ -19,9 +19,9 @@ class AutomobileServiceImpl(
 ) : AutomobileService {
         private val log = LoggerFactory.getLogger(this::class.java)
         companion object {
-                val STATUS = listOf("available")
+                val STATUS = listOf("available", "lost", "rented", "repairing")
                 val BODY_TYPE = listOf("미니SUV", "준중형SUV", "중형SUV", "경형RV", "대형RV", "중형트럭")
-                val MANUFACTURERS = listOf("현대", "KIA", "쉐보레", "BMW", "벤츠", "토요타")
+                val MANUFACTURERS = listOf("현대", "KIA", "쉐보레", "BMW", "벤츠")
         }
 
         override fun setCar(
