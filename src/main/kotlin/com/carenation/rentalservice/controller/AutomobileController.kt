@@ -20,20 +20,21 @@ class AutomobileController(private val automobileService: AutomobileService) {
 
     @PostMapping("/register")
     fun registerCar(@RequestBody carInfo: Map<String, Any>): ResponseEntity<Map<String, Any>> {
-        val category =
-                carInfo["category"] as? String
-                        ?: throw IllegalArgumentException("Category is required")
-
-        val manufacturer = carInfo["manufacturer"] as? String ?: "Unknown"
-        val model = carInfo["model"] as? String ?: "Unknown"
-        val year = carInfo["year"] as? String ?: "Unknown"
-        val status = (carInfo["status"] as? String)?.takeIf { it.isNotBlank() } ?: "AVAILABLE"
-        val rentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
-
-        val registeredCar =
-                automobileService.setCar(category, manufacturer, model, year, status, rentTime)
-
-        return ResponseEntity.ok(buildResponse("Car registered successfully", registeredCar))
+        return try {
+            val category =
+                    carInfo["category"] as? String
+                            ?: throw IllegalArgumentException("Category is required")
+            val manufacturer = carInfo["manufacturer"] as? String ?: "Unknown"
+            val model = carInfo["model"] as? String ?: "Unknown"
+            val year = carInfo["year"] as? String ?: "Unknown"
+            val status = (carInfo["status"] as? String)?.takeIf { it.isNotBlank() } ?: "AVAILABLE"
+            val rentTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+            val registeredCar =
+                    automobileService.setCar(category, manufacturer, model, year, status, rentTime)
+            ResponseEntity.ok(buildResponse("Car registered successfully", registeredCar))
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().body(mapOf("error" to e.message as Any))
+        }
     }
 
     // category(body_type) 및 status로 조회가 되어야한다.
