@@ -8,6 +8,7 @@ interface AutomobileDao {
     fun findByManufacturer(manufacturer: String): List<Automobile>
     fun findByYear(year: String): List<Automobile>
     fun findByModel(model: String): List<Automobile>
+    fun updateCategory(id: Long, newCategory: String): Automobile
     fun save(automobile: Automobile): Automobile
     fun findById(id: Long): Automobile?
     fun deleteById(id: Long)

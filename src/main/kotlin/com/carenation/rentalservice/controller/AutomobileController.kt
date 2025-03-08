@@ -50,12 +50,44 @@ class AutomobileController(private val automobileService: AutomobileService) {
             ResponseEntity.internalServerError().body(mapOf("error" to e.message))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(mapOf("error" to "An unexpected error occurred"))
+                    .body(
+                            mapOf(
+                                    "error" to
+                                            "An unexpected error occurred while searching for info. cause{$e.message}"
+                            )
+                    )
         }
     }
 
     @PatchMapping("/update")
-    fun updateCar(): String {
-        return "update Car"
+    fun updateCar(@RequestBody updateInfo: Map<String, Any>): ResponseEntity<Any> {
+
+        if (updateInfo.isNullOrEmpty()) {
+            return ResponseEntity.badRequest().body(mapOf("error" to "empty update info received"))
+        }
+
+        return try {
+            val id =
+                    updateInfo["id"] as? Int
+                            ?: throw IllegalArgumentException("ID for the automobile is required")
+            val newCategory =
+                    updateInfo["category"] as? String
+                            ?: throw IllegalArgumentException(
+                                    "new category for the automobile is required"
+                            )
+
+            val updatedCar = automobileService.updateCar(id.toLong(), newCategory)
+            ResponseEntity.ok(updatedCar)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().body(mapOf("error" to e.message))
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(
+                            mapOf(
+                                    "error" to
+                                            "An unexpected error occurred while updating info. cause:{$e.message}"
+                            )
+                    )
+        }
     }
 }

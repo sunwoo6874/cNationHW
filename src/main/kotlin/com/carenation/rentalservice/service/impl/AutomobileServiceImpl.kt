@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class AutomobileServiceImpl(
         private val automobileDao: AutomobileDao,
         private val categoryRepository: CategoryRepository,
@@ -23,7 +24,6 @@ class AutomobileServiceImpl(
                 val MANUFACTURERS = listOf("현대", "KIA", "쉐보레", "BMW", "벤츠", "토요타")
         }
 
-        @Transactional
         override fun setCar(
                 category: String,
                 manufacturer: String,
@@ -110,17 +110,16 @@ class AutomobileServiceImpl(
                 return amDtoList
         }
 
-        override fun updateCar(): AutomobileDto {
-                val updatedCarDto =
-                        AutomobileDto(
-                                id = 1L,
-                                manufacturer = "Honda",
-                                model = "Civic",
-                                year = "2023",
-                                status = "AVAILABLE",
-                                rentTime = LocalDateTime.now(),
-                                categories = setOf("Sedan") // 하드코딩 예시
-                        )
+        override fun updateCar(id: Long, category: String): AutomobileDto {
+                var updatedCarDto: AutomobileDto
+                var updatedAutomobile: Automobile
+                try {
+                        updatedAutomobile = automobileDao.updateCategory(id, category)
+                        updatedCarDto = updatedAutomobile.toDto()
+                } catch (e: IllegalArgumentException) {
+                        throw IllegalArgumentException(e.message)
+                }
+
                 log.info("Updated car: {}", updatedCarDto)
                 return updatedCarDto
         }

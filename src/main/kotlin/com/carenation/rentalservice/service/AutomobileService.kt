@@ -17,5 +17,5 @@ interface AutomobileService {
     // category 및 status로 고를 수 있어야 한다.
     fun getCar(searchType: String): List<AutomobileDto>
 
-    fun updateCar(): AutomobileDto
+    fun updateCar(id: Long, category: String): AutomobileDto
 }
