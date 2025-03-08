@@ -3,7 +3,6 @@ package com.carenation.rentalservice.service.impl
 import com.carenation.rentalservice.data.dao.AutomobileDao
 import com.carenation.rentalservice.data.dto.AutomobileDto
 import com.carenation.rentalservice.data.entity.Automobile
-import com.carenation.rentalservice.data.entity.Category
 import com.carenation.rentalservice.repository.CategoryRepository
 import com.carenation.rentalservice.service.AutomobileService
 import java.time.LocalDateTime
@@ -18,8 +17,11 @@ class AutomobileServiceImpl(
         private var automobiles: List<Automobile>
 ) : AutomobileService {
         private val log = LoggerFactory.getLogger(this::class.java)
-        private val STATUS = listOf("available", "lost", "rented", "repairing")
-        private val BODY_TYPE = listOf("미니SUV", "준중형SUV", "중형SUV", "경형RV", "대형RV", "중형트럭")
+        companion object {
+                val STATUS = listOf("available")
+                val BODY_TYPE = listOf("미니SUV", "준중형SUV", "중형SUV", "경형RV", "대형RV", "중형트럭")
+                val MANUFACTURERS = listOf("현대", "KIA", "쉐보레", "BMW", "벤츠", "토요타")
+        }
 
         @Transactional
         override fun setCar(
@@ -30,7 +32,6 @@ class AutomobileServiceImpl(
                 status: String,
                 rentTime: LocalDateTime
         ): AutomobileDto {
-
                 val newCarDto =
                         AutomobileDto(
                                 id = null,
@@ -51,28 +52,60 @@ class AutomobileServiceImpl(
         }
 
         override fun getCar(searchType: String): List<AutomobileDto> {
-                if (searchType.isNullOrEmpty() || searchType.isNullOrBlank()) {
+
+                if (searchType.isNullOrBlank()) {
                         throw IllegalArgumentException("searchType is required.")
                 }
 
-                if (STATUS.contains(searchType)) {
-                        automobiles = automobileDao.findByStatus(searchType)
-                } else if (BODY_TYPE.contains(searchType)) {
-                        val category: Category? = categoryRepository.findByBodyType(searchType)
-
-                        val bodyType =
-                                category?.bodyType
-                                        ?: run {
-                                                val errorMessage = "bodyType not found"
-                                                throw IllegalArgumentException(errorMessage)
+                val automobiles: List<Automobile> =
+                        when {
+                                // 대여 상태
+                                STATUS.contains(searchType.lowercase()) -> {
+                                        if (searchType.equals("available", ignoreCase = true)) {
+                                                automobileDao.findByStatus(searchType)
+                                        } else {
+                                                throw IllegalArgumentException(
+                                                        "status for only available cars are allowed"
+                                                )
                                         }
-                        automobiles = automobileDao.findByCategory(bodyType)
-                } else {
-                        throw IllegalStateException("unknown category requested..")
+                                }
+                                // 바디 타입
+                                BODY_TYPE.contains(searchType.lowercase()) -> {
+                                        val category = categoryRepository.findByBodyType(searchType)
+                                        val bodyType =
+                                                category?.bodyType
+                                                        ?: throw NoSuchElementException(
+                                                                "bodyType not found for: $searchType"
+                                                        )
+                                        automobileDao.findByCategory(bodyType)
+                                }
+                                // 제조사
+                                MANUFACTURERS.any { it.equals(searchType, ignoreCase = true) } -> {
+                                        automobileDao.findByManufacturer(searchType)
+                                }
+                                // 생산년도
+                                searchType.all { it.isDigit() } -> {
+                                        automobileDao.findByYear(searchType)
+                                }
+                                // 모델
+                                else -> {
+                                        automobileDao.findByModel(searchType).also {
+                                                if (it.isEmpty()) {
+                                                        throw IllegalStateException(
+                                                                "unknown searchType requested: $searchType"
+                                                        )
+                                                }
+                                        }
+                                }
+                        }
+
+                if (automobiles.isEmpty()) {
+                        throw NoSuchElementException(
+                                "No automobiles found for searchType: $searchType"
+                        )
                 }
 
                 val amDtoList = automobiles.map { it.toDto() }
-
                 log.info("Retrieved car: {}", amDtoList)
                 return amDtoList
         }

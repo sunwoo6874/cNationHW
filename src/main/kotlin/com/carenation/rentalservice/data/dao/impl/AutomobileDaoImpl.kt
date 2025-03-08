@@ -33,6 +33,39 @@ class AutomobileDaoImpl : AutomobileDao {
         return query.resultList
     }
 
+    override fun findByManufacturer(manufacturer: String): List<Automobile> {
+        val query =
+                entityManager
+                        .createQuery(
+                                "SELECT a FROM Automobile a WHERE a.manufacturer = :manufacturer",
+                                Automobile::class.java
+                        )
+                        .setParameter("manufacturer", manufacturer)
+        return query.resultList
+    }
+
+    override fun findByYear(year: String): List<Automobile> {
+        val query =
+                entityManager
+                        .createQuery(
+                                "SELECT a FROM Automobile a WHERE a.year = :year",
+                                Automobile::class.java
+                        )
+                        .setParameter("year", year)
+        return query.resultList
+    }
+
+    override fun findByModel(model: String): List<Automobile> {
+        val query =
+                entityManager
+                        .createQuery(
+                                "SELECT a FROM Automobile a WHERE a.model = :model",
+                                Automobile::class.java
+                        )
+                        .setParameter("model", model)
+        return query.resultList
+    }
+
     override fun save(automobile: Automobile): Automobile {
         entityManager.persist(automobile)
         return automobile

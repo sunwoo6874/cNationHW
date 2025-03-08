@@ -46,6 +46,8 @@ class AutomobileController(private val automobileService: AutomobileService) {
             ResponseEntity.badRequest().body(mapOf("error" to e.message))
         } catch (e: IllegalStateException) {
             ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(mapOf("error" to e.message))
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.internalServerError().body(mapOf("error" to e.message))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(mapOf("error" to "An unexpected error occurred"))
