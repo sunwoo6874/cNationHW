@@ -61,7 +61,7 @@
         <div class="endpoint">
             <h3>차량 정보 등록</h3>
             <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/register</code></p>
-            <h4>요청 예제:</h4>
+            <h4>정보 등록 요청:</h4>
             <pre class="curl-example">
 curl -X POST -H "Content-Type: application/json" \
 -d '{"category":"현대","manufacturer":"Toyota","model":"RAV4","year":"2025","status":"NEW"}' \
@@ -72,12 +72,26 @@ http://localhost:8080/rental/api/register
         <div class="endpoint">
             <h3>차량 정보 조회</h3>
             <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/lookup</code></p>
+            <h4>정보 조회 요청:</h4>
+            <pre class="curl-example">
+                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=현대"
+                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=available"
+                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=2022"
+                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=쏘렌토"
+            </pre>
         </div>
 
         <div class="endpoint">
             <h3>차량 정보 수정</h3>
             <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/update</code></p>
+            <h4>정보 업데이트 요청:</h4>
+            <pre class="curl-example">
+                curl -X PATCH 'http://localhost:8080/rental/api/update' \
+                -H 'Content-Type: application/json' \
+                -d '{"id": 2, "category": "미니"}'
+            </pre>
         </div>
     </div>
 </body>
 </html>
+
