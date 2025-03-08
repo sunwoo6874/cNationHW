@@ -74,10 +74,10 @@ http://localhost:8080/rental/api/register
             <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/lookup</code></p>
             <h4>정보 조회 요청:</h4>
             <pre class="curl-example">
-                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=현대"
-                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=available"
-                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=2022"
-                curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=쏘렌토"
+curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=현대"
+curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=available"
+curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=2022"
+curl -G "http://localhost:8080/rental/api/lookup" --data-urlencode "searchType=쏘렌토"
             </pre>
         </div>
 
@@ -86,9 +86,8 @@ http://localhost:8080/rental/api/register
             <p><strong>URL:</strong> <code>http://localhost:8080/rental/api/update</code></p>
             <h4>정보 업데이트 요청:</h4>
             <pre class="curl-example">
-                curl -X PATCH 'http://localhost:8080/rental/api/update' \
-                -H 'Content-Type: application/json' \
-                -d '{"id": 2, "category": "미니"}'
+curl -X PATCH 'http://localhost:8080/rental/api/update' -H 'Content-Type: application/json' \
+-d '{"id": 2, "category": "미니"}'
             </pre>
         </div>
     </div>
